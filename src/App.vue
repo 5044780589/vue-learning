@@ -3,7 +3,7 @@
     <div id="nav">
       <!-- 路由跳转连接 -->
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about/info">About</router-link>
     </div>
     <!-- 路由出口 -->
     <!-- 利用vue响应式：current -->
