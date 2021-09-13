@@ -1,6 +1,7 @@
 let Vue
 class VueRouter {
     constructor(options) {
+        console.log(options)
         this.$options = options
         this.current = window.location.hash.slice(1) || "/";
         // const initial = window.location.hash.slice(1) || "/";
@@ -23,6 +24,7 @@ class VueRouter {
     }
     match(routes){
         routes = routes || this.$options.routes
+        console.log(this.$options)
         for(const route of routes){
             if(route.path==='/'&&this.current==='/'){
                 this.matched.push(route)

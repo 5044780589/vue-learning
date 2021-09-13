@@ -43,6 +43,7 @@ class Store{
     }
     commit(type,payload){
         const entry = this._mutations[type]
+        console.log(payload)
         if(!entry){
             console.error('this is nor a mutations')
         }
@@ -50,6 +51,7 @@ class Store{
     }
     dispatch(type,payload){
         const entry = this._actions[type]
+        console.log(payload)
         if(!entry){
             console.error('this is nor a actions')
         }

@@ -11,16 +11,16 @@ export default new Vuex.Store({
     counter: 0
   },
   mutations: {
-    add(state) {
+    add(state){
       
       state.counter++
     }
   },
   actions: {
-    add({commit}) {
-      
+    add({commit},payload) {
+      console.log(commit)
       setTimeout(() => {
-        commit('add')
+        commit('add',payload)
       }, 1000)
     }
   },

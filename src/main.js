@@ -10,7 +10,7 @@ Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
 
 new Vue({
-  router,
+  router,//为了在调用Vue.use(VueRouter)时能延迟到某一时间点获取到router配置项，通过混入模式mixin实现
   store,
   render: h => h(App)
 }).$mount('#app')
