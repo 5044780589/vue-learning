@@ -1,6 +1,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <div id="app">
     <p>{{counter}}</p>
+    <p>{{num}}</p>
     <p v-text='counter'></p>
     <p v-html='htmlstr'></p>
 </div>
@@ -12,10 +13,12 @@
         el:'#app',
         data:{
             counter:1,
-            htmlstr:'<span>test</span>'
+            htmlstr:'<span>test</span>',
+            num:2
         }
     })
     setInterval(()=>{
         app.counter++;
+        app.num++;
     },1000)
 </script>

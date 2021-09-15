@@ -1,16 +1,19 @@
 function defineReactive(obj,key,val){
     observe(val)
+
+    const dep = new Dep()
     Object.defineProperty(obj,key,{
         get(){
-            console.log('get--',val)
+            // console.log('get--',val)
+            Dep.target&&dep.addDep(Dep.target)
             return val
         },
         set(newVal){
             if(newVal!==val){
-                console.log('set--',val)
+                // console.log('set--',val)
                 observe(newVal)
                 val = newVal
-                watchers.forEach((item)=>item.update())
+                dep.notify()
             }
         }
     })
@@ -107,13 +110,13 @@ class Compile {
     complleText(node){
         this.update(node,RegExp.$1,'text')
     }
-    // textUpdater(node,value){
-    //     console.log(this)
-    //     node.textContent = value
-    // }
-    textUpdater=(node,value)=>{
+    textUpdater(node,value){
+        // console.log(this)
         node.textContent = value
     }
+    // textUpdater = (node,value)=>{
+    //     node.textContent = value
+    // }
     text(node,value){
         this.update(node,value,'text')
     } 
@@ -125,20 +128,33 @@ class Compile {
     }
 }
 
-var func = function(){
-    console.log(this)
-}
-
 const watchers = []
 class Watcher {
     constructor(vm,key,updateFn){
         this.vm = vm
         this.key = key
         this.updateFn = updateFn
-        watchers.push(this)
+
+        Dep.target = this
+        this.vm[this.key]
+        Dep.target = null
+        // watchers.push(this)
     }
     update(){
         this.updateFn.call(this.vm,this.vm[this.key])
+    }
+}
+
+class Dep {
+    constructor(){
+        this.depList = []
+    }
+    addDep (watch){
+        this.depList.push(watch)
+        console.log(this.depList)
+    }
+    notify (){
+        this.depList.forEach((item)=>item.update())
     }
 }
 
