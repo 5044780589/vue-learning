@@ -1,4 +1,8 @@
+//为了实现数组响应式，重写Array.prototype
+
+//对象响应式
 function defineReactive(obj,key,val){
+    
     observe(val)
 
     const dep = new Dep()
@@ -33,16 +37,35 @@ function observe(obj){
 class Observe{
     constructor(value) {
         this.value = value
-        if(Array.isArray(this.value)){
+        this.walk(value)
 
-        }else{
-            this.walk(value)
-        }
     }
     walk(obj){
-        Object.keys(obj).forEach(item => {
-            defineReactive(obj,item,obj[item])
-        });
+        const dep = new Dep()
+        const orginalArray = Array.prototype
+        var creatArray = Object.create(orginalArray);
+        ['push','pop','shift','unshift'].forEach((method)=>{
+            creatArray[method] = function(){
+                console.log(this,arguments)
+                orginalArray[method].apply(this,arguments)
+            
+                observe(this)
+                // val = newVal
+                dep.notify()
+            }
+        })
+        if(Array.isArray(obj)){
+            obj._proto_ = creatArray
+            obj.prototype = creatArray
+            const keys = Object.keys(obj)
+            for(let i =0;i<obj.length;i++){
+                observe(obj[i])
+            }
+        }else{
+            Object.keys(obj).forEach(item => {
+                defineReactive(obj,item,obj[item])
+            });
+        }
     }
 }
 
@@ -157,6 +180,8 @@ class Dep {
         this.depList.forEach((item)=>item.update())
     }
 }
+
+
 
 class KVue {
     constructor(options){
