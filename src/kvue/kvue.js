@@ -24,18 +24,19 @@ function defineReactive(obj,key,val){
             }
         }
     })
+    function dependArray (value) {
+        for (var e = (void 0), i = 0, l = value.length; i < l; i++) {
+          e = value[i];
+        //   e && e.__ob__ && e.__ob__.dep.addDep();
+            Dep.target&&dep.addDep(Dep.target)
+          if (Array.isArray(e)) {
+            dependArray(e);
+          }
+        }
+      }
 }
 
-function dependArray (value) {
-    for (var e = (void 0), i = 0, l = value.length; i < l; i++) {
-      e = value[i];
-    //   e && e.__ob__ && e.__ob__.dep.addDep();
-    Dep.target&&dep.addDep(Dep.target)
-      if (Array.isArray(e)) {
-        dependArray(e);
-      }
-    }
-  }
+
 
 function observe(obj){
     if(typeof obj  !=='object'||obj===null){
@@ -201,10 +202,17 @@ class Compile {
                 Array.from(attrs).forEach((attr)=>{
                    const attrName = attr.name;
                    const attrValue = attr.value;
-                    if(attrName.startsWith('v-')){
+                    if(this.isDirective(attrName)){
                         const dir = attrName.substring(2)
                         console.log(dir)
                         this[dir]&&this[dir](node,attrValue)
+                    }
+
+                    if(this.isEvent(attrName)){
+                        //@click="onClick"
+                        const dir = attrName.substring(1)
+                        //事件监听
+                        this.eventHandler(node,attrValue,dir)
                     }
                 })
             }else if(this.innerTest(node)){
@@ -216,6 +224,19 @@ class Compile {
                 this.complle(node)
             }
         })
+    }
+
+    isDirective(attr){
+        return attr.indexOf('v-') === 0
+    }
+
+    isEvent(attr){
+        return attr.indexOf('@') === 0
+    }
+
+    eventHandler(node,exp,dir){
+        const fn = this.$vm.$options.methods && this.$vm.$options.methods[exp]
+        node.addEventListener(dir,fn.bind(this.$vm))
     }
     //Watcher更新函数执行
     update(node,value,dir){
@@ -249,6 +270,19 @@ class Compile {
     }
     html(node,value){
         this.update(node,value,'html')
+    }
+
+    modelUpdater(node,value){
+        node.value = value
+    }
+
+    //v-model
+    model(node,value){
+        this.update(node,value,'model')
+        //事件监听
+        node.addEventListener('input',(e)=>{
+            this.$vm[value] = e.target.value
+        })
     }
 }
 
