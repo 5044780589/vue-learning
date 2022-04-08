@@ -1,9 +1,4 @@
-
-<div id="app">
-   
-</div>
-<script>
-    const isObject = v => typeof v === 'object' && v !== null 
+const isObject = v => typeof v === 'object' && v !== null 
 
 function reactive(obj){
     if(!isObject(obj)){
@@ -94,14 +89,7 @@ function trigger(target,key){
     }
 }
 
-const state = reactive({name:'123',age:'18'})
+const state = reactive({foo:'foo',a:{b:[1,2,3]},c:[1,2,3]})
 effect(()=>{
-    app.innerHTML = `<h1>${state.name}今年${state.age}岁了</h1>`
     console.log('effect',state.foo)
 })
-
-setInterval(() => {
-    state.age++
-}, 1000);
-
-</script>

@@ -1,0 +1,4 @@
+1.effect可以建立一个依赖关系：传入effect的回调函数和响应式数据之间
+2.vue2使用watcher做依赖收集，watcher调用updateComponent。vue3使用effect做依赖收集,先调用setupRenderEffect()，其内部调用effect，回调调用rootComponent.render()和patch()
+3.mount()=>render()=>patch()=>processComponent()=>mountComponent()=>setupComponent()=>setupStatefulComponent()响应式处理=>reactive()
+                                                                                    =>setupRenderEffect()依赖收集=>effect()

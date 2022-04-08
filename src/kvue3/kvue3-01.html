@@ -1,0 +1,91 @@
+
+<div id="app">
+   
+</div>
+<script>
+//creatRenderer（） =>  renderer =>  renderer.createApp() <= creatAppAPI()
+    const creatAppAPI = (render) =>{
+        //rootComponent是根组件
+        //返回应用程序实例
+        return function createApp (rootComponent){
+            const app = {
+                mount(rootContainer){
+                    //挂载 vnode=>dom
+                    const vnode = {
+                        tag:rootComponent
+                    }
+                    render(vnode,rootContainer)
+                }
+                
+            }
+            return app
+        }
+    }
+
+    //2.实现renderer工厂函数
+    const creatRenderer = options=>{
+
+        const patch = (n1,n2,container) =>{
+            //根组件配置
+            const rootComponent = n2.tag
+            //正常应该用数据响应式
+            const ctx = {...rootComponent.data()}
+            //执行render获取vnode
+            const vnode = rootComponent.render.call(ctx)
+            //转换vnode
+            const parent = options.querySelector(container)
+            const child = options.createElement(vnode.tag)
+            if(typeof vnode.tag ==='string'){
+                child.textContent = vnode.children
+            }else{
+                //array
+            }
+            options.insert(child,parent)
+        }
+        //将虚拟dom vdom渲染成真实dom挂载到container
+        const render = (vnode,container)=>{
+            patch(container._vnode||null ,vnode,container)
+            container._vnode = vnode
+        }
+        //该对象就是renderer
+        return {
+            render,
+            createApp:creatAppAPI(render)
+        }
+    }
+
+    const renderer = creatRenderer({
+        querySelector(sel){
+            return document.querySelector(sel)
+        },
+        createElement(tag){
+            return document.createElement(tag)
+        },
+        insert(child,parent){
+            parent.appendChild(child)
+        }
+    })
+
+    //1.createApp
+    const Vue = {
+        createApp(options){
+            //实际执行的是renderer.createApp()
+            //renderer是渲染器
+            return renderer.createApp(options)
+        }
+    }
+    Vue.createApp({
+        data(){
+            return{
+                foo:'hello world'
+            }
+        },
+        render(){
+            return {
+                tag:'h2',
+                children:this.foo
+            }
+        }
+    }).mount('#app')
+
+</script>
