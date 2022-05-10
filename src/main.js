@@ -4,10 +4,12 @@ import App from './App.vue'
 // import store from './kstore'
 import store from './store'
 import router from './router'
+import create from "@/utils/create"
 
 Vue.config.productionTip = false
 // 事件总线
 Vue.prototype.$bus = new Vue()
+Vue.use(create)
 
 new Vue({
   router,//为了在调用Vue.use(VueRouter)时能延迟到某一时间点获取到router配置项，通过混入模式mixin实现
